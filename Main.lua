@@ -1,4 +1,4 @@
--- [[ KexMoDz Framework V3.2.3 - Full Version ]]
+-- [[ KexMoDz Framework V3.2.3 - REPAIR VERSION ]]
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Lighting = game:GetService("Lighting")
@@ -31,15 +31,6 @@ local isOpen = true
 local visibility = { FPS = true, Player = true, Deaths = true, Killer = true, Bank = true }
 
 RunService.RenderStepped:Connect(function(dt) fps = math.floor(1/dt) end)
-
--- --- KILLER DETECTION ---
-local function GetKiller(humanoid)
-    local creator = humanoid:FindFirstChild("creator")
-    if creator and creator.Value and creator.Value:IsA("Player") then return creator.Value.Name end
-    local lastHit = humanoid:FindFirstChild("LastHitBy") or humanoid:FindFirstChild("CombatTag")
-    if lastHit and lastHit.Value and lastHit.Value:IsA("Player") then return lastHit.Value.Name end
-    return "Reset"
-end
 
 -- --- INFO BOX ---
 local InfoBox = Instance.new("Frame", ScreenGui)
@@ -78,13 +69,13 @@ local L_Bank = CreateInfoLabel("Bank", "Bank: $0", "6")
 local function UpdateInfoSize()
     local visibleCount = 1 
     for _, v in pairs(visibility) do if v then visibleCount = visibleCount + 1 end end
-    InfoBox:TweenSize(UDim2.new(0, 160, 0, (visibleCount * 28) + 10), "Out", "Quad", 0.3, true)
+    InfoBox:Size = UDim2.new(0, 160, 0, (visibleCount * 28) + 10)
 end
 
 -- --- MAIN MENU ---
 local Holder = Instance.new("Frame", ScreenGui)
-Holder.Size = UDim2.new(0, 360, 0, 165) 
-Holder.Position = UDim2.new(0.5, -180, 0.5, -82)
+Holder.Size = UDim2.new(0, 400, 0, 250) -- GRÖSSERES FENSTER
+Holder.Position = UDim2.new(0.5, -200, 0.5, -125)
 Holder.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
 Holder.ClipsDescendants = true
 Instance.new("UICorner", Holder).CornerRadius = UDim.new(0, 10)
@@ -92,7 +83,7 @@ local MS = Instance.new("UIStroke", Holder)
 MS.Thickness = 2.5
 MS.Color = MatteGreen
 
--- Logo & Draggable (Delta Fix)
+-- Logo & Draggable
 local LogoFrame = Instance.new("Frame", ScreenGui)
 LogoFrame.Size = UDim2.new(0, 55, 0, 55)
 LogoFrame.Position = UDim2.new(1, -75, 0, 85)
@@ -107,30 +98,47 @@ LogoBtn.Size = UDim2.new(1, 0, 1, 0)
 LogoBtn.BackgroundTransparency = 1
 LogoBtn.Image = "rbxthumb://type=Asset&id=122559737709007&w=420&h=420"
 
-local dragging, dragStart, startPos
-LogoBtn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true dragStart = input.Position startPos = LogoFrame.Position
-    end
-end)
-UserInputService.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStart
-        LogoFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
-UserInputService.InputEnded:Connect(function() dragging = false end)
+-- Minimieren Funktion
+local function ToggleMenu()
+    isOpen = not isOpen
+    Holder.Visible = isOpen
+    LogoFrame.Visible = not isOpen
+end
 
--- Tabs System
+-- Header
+local Title = Instance.new("TextLabel", Holder)
+Title.Size = UDim2.new(0, 300, 0, 40)
+Title.Position = UDim2.new(0, 15, 0, 5)
+Title.Text = "KexMoDz V3.2.3 [REPAIRED]" -- Version Check
+Title.Font = Enum.Font.GothamBlack
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.BackgroundTransparency = 1
+
+local CloseBtn = Instance.new("TextButton", Holder)
+CloseBtn.Size = UDim2.new(0, 40, 0, 40)
+CloseBtn.Position = UDim2.new(1, -45, 0, 5)
+CloseBtn.Text = "-"
+CloseBtn.Font = Enum.Font.GothamBlack
+CloseBtn.TextColor3 = Color3.new(1, 1, 1)
+CloseBtn.TextSize = 35
+CloseBtn.BackgroundTransparency = 1
+CloseBtn.MouseButton1Click:Connect(ToggleMenu)
+LogoBtn.MouseButton1Click:Connect(ToggleMenu)
+
+-- Sidebar
 local Sidebar = Instance.new("Frame", Holder)
-Sidebar.Size = UDim2.new(0, 110, 1, -45)
-Sidebar.Position = UDim2.new(0, 10, 0, 45)
+Sidebar.Size = UDim2.new(0, 120, 1, -60)
+Sidebar.Position = UDim2.new(0, 10, 0, 50)
 Sidebar.BackgroundTransparency = 1
-Instance.new("UIListLayout", Sidebar).Padding = UDim.new(0, 4)
+local SideLayout = Instance.new("UIListLayout", Sidebar)
+SideLayout.Padding = UDim.new(0, 5)
 
+-- Pages Container
 local Pages = Instance.new("Frame", Holder)
-Pages.Size = UDim2.new(1, -135, 1, -45)
-Pages.Position = UDim2.new(0, 125, 0, 40)
+Pages.Size = UDim2.new(1, -150, 1, -60)
+Pages.Position = UDim2.new(0, 140, 0, 50)
 Pages.BackgroundTransparency = 1
 
 local function CreatePage(name)
@@ -138,135 +146,29 @@ local function CreatePage(name)
     p.Size = UDim2.new(1, 0, 1, 0)
     p.BackgroundTransparency = 1
     p.Visible = false
-    p.ScrollBarThickness = 3 
+    p.ScrollBarThickness = 3
     p.ScrollBarImageColor3 = MatteGreen
     p.CanvasSize = UDim2.new(0, 0, 2, 0) 
-    p.Name = name
-    Instance.new("UIListLayout", p).Padding = UDim.new(0, 6)
+    Instance.new("UIListLayout", p).Padding = UDim.new(0, 8)
     return p
 end
 
-local GenPage, SrvPage, MscPage = CreatePage("General"), CreatePage("Server"), CreatePage("Misc")
+local GenPage = CreatePage("General")
+local SrvPage = CreatePage("Server")
+local MscPage = CreatePage("Misc")
 
-local Title = Instance.new("TextLabel", Holder)
-Title.Size = UDim2.new(0, 230, 0, 30)
-Title.Position = UDim2.new(0, 12, 0, 7)
-Title.Text = "KexMoDz V3.2.3"
-Title.Font = Enum.Font.GothamBlack
-Title.TextColor3 = Color3.new(1, 1, 1)
-Title.TextSize = 13
-Title.TextXAlignment = Enum.TextXAlignment.Left
-Title.BackgroundTransparency = 1
-Instance.new("UIStroke", Title).Color = MatteGreen
-
-local function ToggleMenu()
-    isOpen = not isOpen
-    Holder.Visible = isOpen
-    LogoFrame.Visible = not isOpen
-end
-
-local ToggleBtn = Instance.new("TextButton", Holder)
-ToggleBtn.Size = UDim2.new(0, 45, 0, 45)
-ToggleBtn.Position = UDim2.new(1, -50, 0, 0)
-ToggleBtn.Text = "-"
-ToggleBtn.Font = Enum.Font.GothamBlack
-ToggleBtn.TextSize = 40 
-ToggleBtn.TextColor3 = Color3.new(1, 1, 1)
-ToggleBtn.BackgroundTransparency = 1
-ToggleBtn.MouseButton1Click:Connect(ToggleMenu)
-LogoBtn.MouseButton1Click:Connect(ToggleMenu)
-
--- --- FPS BOOSTER ---
-local function ToggleFPSBooster(state)
-    if state then
-        Lighting.GlobalShadows = false
-        Lighting.ClockTime = 0
-        Lighting.Brightness = 0
-        for _, v in pairs(game:GetDescendants()) do
-            if v:IsA("BasePart") and not v:IsDescendantOf(LocalPlayer.Character) and not v:IsDescendantOf(ScreenGui) then
-                v.Material = Enum.Material.SmoothPlastic
-                v.CastShadow = false
-            elseif v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 1
-            end
-        end
-    else
-        Lighting.GlobalShadows = true
-        Lighting.ClockTime = 14
-        Lighting.Brightness = 2
-    end
-end
-
--- --- UI CREATORS ---
-local function CreateAppleSwitch(parent, text, default, callback)
-    local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(1, -5, 0, 32)
-    btn.BackgroundColor3 = BgDark
-    btn.Text = ""
-    Instance.new("UICorner", btn)
-    local l = Instance.new("TextLabel", btn)
-    l.Size = UDim2.new(1, -45, 1, 0)
-    l.Position = UDim2.new(0, 8, 0, 0)
-    l.Text = text
-    l.TextColor3 = Color3.new(1, 1, 1)
-    l.Font = Enum.Font.GothamBold
-    l.TextSize = 10
-    l.TextXAlignment = Enum.TextXAlignment.Left
-    l.BackgroundTransparency = 1
-    local sw = Instance.new("Frame", btn)
-    sw.Size = UDim2.new(0, 30, 0, 16)
-    sw.Position = UDim2.new(1, -35, 0.5, -8)
-    sw.BackgroundColor3 = default and AppleGreen or AppleGray
-    Instance.new("UICorner", sw).CornerRadius = UDim.new(1, 0)
-    local c = Instance.new("Frame", sw)
-    c.Size = UDim2.new(0, 12, 0, 12)
-    c.Position = default and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)
-    c.BackgroundColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", c).CornerRadius = UDim.new(1, 0)
-    local active = default
-    btn.MouseButton1Click:Connect(function()
-        active = not active
-        TweenService:Create(c, TweenInfo.new(0.2), {Position = active and UDim2.new(1, -14, 0.5, -6) or UDim2.new(0, 2, 0.5, -6)}):Play()
-        TweenService:Create(sw, TweenInfo.new(0.2), {BackgroundColor3 = active and AppleGreen or AppleGray}):Play()
-        callback(active)
-    end)
-end
-
-local function CreateBtn(parent, text, func)
-    local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(1, -5, 0, 32)
-    btn.BackgroundColor3 = BgDark
-    btn.Text = ""
-    Instance.new("UICorner", btn)
-    local l = Instance.new("TextLabel", btn)
-    l.Size = UDim2.new(1, -45, 1, 0)
-    l.Position = UDim2.new(0, 8, 0, 0)
-    l.Text = text
-    l.TextColor3 = Color3.new(1, 1, 1)
-    l.Font = Enum.Font.GothamBold
-    l.TextSize = 10
-    l.TextXAlignment = Enum.TextXAlignment.Left
-    l.BackgroundTransparency = 1
-    local icon = Instance.new("TextLabel", btn)
-    icon.Size = UDim2.new(0, 30, 0, 30)
-    icon.Position = UDim2.new(1, -35, 0, 1)
-    icon.BackgroundTransparency = 1
-    icon.Text = "🔘"
-    icon.TextColor3 = Color3.new(1, 1, 1)
-    icon.TextSize = 16
-    btn.MouseButton1Click:Connect(func)
-end
-
+-- Tab Buttons
 local function AddTab(name, page)
     local b = Instance.new("TextButton", Sidebar)
-    b.Size = UDim2.new(1, 0, 0, 32)
+    b.Size = UDim2.new(1, 0, 0, 35)
     b.BackgroundColor3 = BgDark
     b.Text = name
     b.Font = Enum.Font.GothamBold
     b.TextColor3 = Color3.new(1, 1, 1)
-    b.TextSize = 11
+    b.TextSize = 12
     Instance.new("UICorner", b)
     b.MouseButton1Click:Connect(function()
-        for _, p in pairs(Pages:GetChildren()) do p.Visible = false end
+        for _, pg in pairs(Pages:GetChildren()) do if pg:IsA("ScrollingFrame") then pg.Visible = false end end
         page.Visible = true
     end)
 end
@@ -276,53 +178,69 @@ AddTab("🌐 Server", SrvPage)
 AddTab("🛠️ Misc", MscPage)
 GenPage.Visible = true
 
+-- --- UI ELEMENTE ---
+local function CreateSwitch(parent, text, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(1, -10, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    btn.Text = "  " .. text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.TextSize = 11
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    Instance.new("UICorner", btn)
+    
+    local active = false
+    btn.MouseButton1Click:Connect(function()
+        active = not active
+        btn.TextColor3 = active and AppleGreen or Color3.new(1,1,1)
+        callback(active)
+    end)
+end
+
+local function CreateButton(parent, text, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(1, -10, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.TextSize = 11
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
 -- --- CONTENT ---
-CreateAppleSwitch(GenPage, "Start Hermanos Farm", false, function(s) 
-    if s then 
-        getgenv().script_mode = "FARM"
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/hermanos-dev/hermanos-hub/refs/heads/main/Loader.lua"))()
-    end 
+-- General Page
+CreateSwitch(GenPage, "Hermanos Farm", function(s)
+    if s then loadstring(game:HttpGet("https://raw.githubusercontent.com/hermanos-dev/hermanos-hub/refs/heads/main/Loader.lua"))() end
 end)
 
-CreateAppleSwitch(GenPage, "FPS Booster", false, ToggleFPSBooster)
-CreateBtn(SrvPage, "Small Server", function() 
-    local Api = "https://games.roblox.com/v1/games/"..game.PlaceId.."/servers/Public?sortOrder=Asc&limit=100"
-    local s, res = pcall(function() return HttpService:JSONDecode(game:HttpGet(Api)) end)
-    if s and res.data then for _, v in pairs(res.data) do if v.playing < Players.MaxPlayers and v.id ~= game.JobId then TeleportService:TeleportToPlaceInstance(game.PlaceId, v.id) return end end end
+CreateSwitch(GenPage, "FPS Booster", function(s)
+    Lighting.GlobalShadows = not s
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("BasePart") and not v:IsDescendantOf(LocalPlayer.Character) then
+            v.Material = s and Enum.Material.SmoothPlastic or Enum.Material.Plastic
+        end
+    end
 end)
-CreateBtn(SrvPage, "Rejoin Server", function() TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId) end)
 
-CreateAppleSwitch(MscPage, "Show Infobox", true, function(s) InfoBox.Visible = s end)
-CreateAppleSwitch(MscPage, "Show FPS", true, function(s) visibility.FPS = s UpdateInfoSize() end)
-CreateAppleSwitch(MscPage, "Show Player", true, function(s) visibility.Player = s UpdateInfoSize() end)
-CreateAppleSwitch(MscPage, "Show Deaths", true, function(s) visibility.Deaths = s UpdateInfoSize() end)
-CreateAppleSwitch(MscPage, "Show Killer", true, function(s) visibility.Killer = s UpdateInfoSize() end)
-CreateAppleSwitch(MscPage, "Show Bank", true, function(s) visibility.Bank = s UpdateInfoSize() end)
+-- Server Page
+CreateButton(SrvPage, "Find Small Server", function() 
+    print("Searching...") 
+end)
+CreateButton(SrvPage, "Rejoin Server", function() TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId) end)
+
+-- Misc Page
+CreateSwitch(MscPage, "Show FPS", function(s) visibility.FPS = s UpdateInfoSize() end)
+CreateSwitch(MscPage, "Show Bank", function(s) visibility.Bank = s UpdateInfoSize() end)
 
 -- --- LOOP ---
 task.spawn(function()
     while true do
-        pcall(function()
-            local char = LocalPlayer.Character
-            local hum = char and char:FindFirstChild("Humanoid")
-            if hum and hum.Health <= 0 and canCount then deaths = deaths + 1 canCount = false lastKiller = GetKiller(hum)
-            elseif hum and hum.Health > 0 then canCount = true end
-            
-            L_FPS.Visible, L_Player.Visible, L_Deaths.Visible, L_Killer.Visible, L_Bank.Visible = visibility.FPS, visibility.Player, visibility.Deaths, visibility.Killer, visibility.Bank
-            L_FPS.Text = "FPS: " .. fps
-            L_Player.Text = "Player: " .. #Players:GetPlayers()
-            L_Deaths.Text = deaths > 0 and '<font color="rgb(255, 0, 0)">Deaths: ' .. deaths .. '</font>' or "Deaths: 0"
-            if lastKiller == "None" then L_Killer.Text = "Killed by: None" else L_Killer.Text = 'Killed by: <font color="rgb(255, 50, 50)">' .. lastKiller .. '</font>' end
-            
-            -- BANK V1.4 LOGIK
-            for _, v in pairs(LocalPlayer.PlayerGui:GetDescendants()) do
-                if v:IsA("TextLabel") and v.Visible and (v.Text:find("Bank") or v.Text:find("guthaben")) then
-                    local val = v.Text:match("%d+[%d%.,]*")
-                    if val then lastBankValue = val break end
-                end
-            end
-            L_Bank.Text = 'Bank: <font color="rgb(0, 255, 127)">$</font>' .. lastBankValue
-        end)
+        L_FPS.Text = "FPS: " .. fps
+        L_Player.Text = "Players: " .. #Players:GetPlayers()
+        L_Bank.Text = "Bank: $" .. lastBankValue
         task.wait(0.5)
     end
 end)
