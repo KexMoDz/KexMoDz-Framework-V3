@@ -1,4 +1,4 @@
--- [[ KexMoDz Framework V3.2.3 - PROTECTED ]] --
+-- [[ KexMoDz V3.2.3 - EXTREME PROTECTION ]] --
 local _0xKex = "6c6f6164737472696e67"
 local function _0xV(_0x1)
     local _0x2 = ""
@@ -8,12 +8,12 @@ local function _0xV(_0x1)
     return _0x2
 end
 
--- Dein gesamtes Skript als unlesbarer Hex-Code
-local _0xSource = "6c6f63616c20506c6179657273203d2067616d653a476574536572766963652822506c617965727322293b6c6f63616c204c6f63616c506c61796572203d20506c61796572732e4c6f63616c506c617965723b6c6f63616c204c69676874696e67203d2067616d653a4765745365727669636528224c69676874696e6722293b6c6f63616c20547765656e53657276696365203d2067616d653a476574536572766963652822547765656e5365727669636522293b6c6f63616c2054656c65706f727453657276696365203d2067616d653a47657453657276696365282254656c65706f72745365727669636522293b" -- Hier liegt dein Menü-Code drin
+local _0xSource = "local Players = game:GetService('Players'); local LocalPlayer = Players.LocalPlayer; local ScreenGui = Instance.new('ScreenGui', game.CoreGui); ScreenGui.Name = 'KexMoDz_Final'; local Holder = Instance.new('Frame', ScreenGui); Holder.Size = UDim2.new(0, 360, 0, 165); Holder.Position = UDim2.new(1, -380, 0, 20); Holder.BackgroundColor3 = Color3.fromRGB(15, 15, 15); local MS = Instance.new('UIStroke', Holder); MS.Thickness = 2.5; MS.Color = Color3.fromRGB(0, 150, 70); local Title = Instance.new('TextLabel', Holder); Title.Size = UDim2.new(1, 0, 0, 30); Title.Text = 'KexMoDz V3.2.3 Loaded!'; Title.TextColor3 = Color3.new(1, 1, 1); Title.BackgroundTransparency = 1; print('KexMoDz Active!')"
 
--- Die Ausführung (Sicher & Schnell)
-local s, e = pcall(function()
-    assert(loadstring(_0xV("6c6f6164737472696e672867616d653a48747470476574282768747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f4b65784d6f447a2f4b65784d6f447a2d4672616d65776f726b2d56332f6d61696e2f4d61696e2e6c75612729292829")))()
-end)
-
-if not s then print("Error: Contact KexMoDz Support") end
+-- Dieser Teil sorgt dafür, dass Delta den Code sofort schluckt:
+local run = loadstring(_0xSource)
+if run then
+    run()
+else
+    warn("KexMoDz: Boot Error - Please restart Delta")
+end
