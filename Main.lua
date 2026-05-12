@@ -1,15 +1,31 @@
--- [[ KexMoDz V3.2.3 - PROTECTED SOURCE ]]
-local _0x_ = "6c6f6164737472696e67"
-local function _0xKex(_0x7)
-    local _0x6 = ""
-    for _0x69 = 1, #_0x7, 2 do
-        _0x6 = _0x6 .. string.char(tonumber(_0x7:sub(_0x69, _0x69+1), 16))
-    end
-    return _0x6
+-- [[ KexMoDz Framework V3.2.3 ]]
+print("KexMoDz: Startet...")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+-- Falls das Menü schon da ist, löschen
+if CoreGui:FindFirstChild("KexMoDz_V1_3_Final") then
+    CoreGui:FindFirstChild("KexMoDz_V1_3_Final"):Destroy()
 end
 
--- Dein verschlüsselter Code (Hex-Format)
-local _0xSource = "6c6f63616c20506c6179657273203d2067616d653a476574536572766963652822506c617965727322293b6c6f63616c204c6f63616c506c61796572203d20506c61796572732e4c6f63616c506c617965723b6c6f63616c204c69676874696e67203d2067616d653a4765745365727669636528224c69676874696e6722293b6c6f63616c20547765656e53657276696365203d2067616d653a476574536572766963652822547765656e5365727669636522293b6c6f63616c2054656c65706f727453657276696365203d2067616d653a47657453657276696365282254656c65706f72745365727669636522293b6c6f63616c204874747053657276696365203d2067616d653a476574536572766963652822487474705365727669636522293b6c6f63616c2052756e53657276696365203d2067616d653a47657453657276696365282252756e5365727669636522293b6c6f63616c2055736572496e70757453657276696365203d2067616d653a47657453657276696365282255736572496e7075745365727669636522293b"
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KexMoDz_V1_3_Final"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
 
--- Ausführung des geschützten Codes
-assert(loadstring(_0xKex(_0xSource)))()
+-- Test-Fenster (damit wir sehen, ob überhaupt was kommt)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 2
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "KexMoDz V3.2.3 Lädt..."
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.BackgroundTransparency = 1
+
+print("KexMoDz: Menü wurde erstellt!")
